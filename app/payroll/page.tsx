@@ -4,8 +4,9 @@ import { AppShell } from "@/components/app-shell";
 import { PageHeader } from "@/components/page-header";
 import { StatusChip } from "@/components/status-chip";
 import { formatInr, payrollRows } from "@/lib/demo-data";
+import { demoPayslips } from "@/lib/demo-payslips";
 import { Button, MessageBar, MessageBarBody, Spinner } from "@fluentui/react-components";
-import { Calculator20Regular, Checkmark16Regular, Send20Regular, Warning20Regular } from "@fluentui/react-icons";
+import { ArrowDownload20Regular, Calculator20Regular, Checkmark16Regular, DocumentPdf20Regular, Send20Regular, Warning20Regular } from "@fluentui/react-icons";
 import { useState } from "react";
 
 const stages = ["Inputs", "Calculation", "HR review", "Finance approval"];
@@ -13,6 +14,8 @@ const stages = ["Inputs", "Calculation", "HR review", "Finance approval"];
 export default function PayrollPage() {
   const [stage, setStage] = useState(2);
   const [calculating, setCalculating] = useState(false);
+  const [generatingPayslips, setGeneratingPayslips] = useState(false);
+  const [payslipsGenerated, setPayslipsGenerated] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
   const recalculate = () => {
@@ -27,6 +30,16 @@ export default function PayrollPage() {
   const submit = () => {
     setStage(3);
     setNotice("Payroll submitted to Finance for approval.");
+  };
+
+  const generatePayslips = () => {
+    setGeneratingPayslips(true);
+    setNotice(null);
+    window.setTimeout(() => {
+      setGeneratingPayslips(false);
+      setPayslipsGenerated(true);
+      setNotice("Four demo payslips generated. Rohan Kulkarni remains on hold until bank details are verified.");
+    }, 700);
   };
 
   const totalGross = payrollRows.reduce((sum, row) => sum + row.gross, 0);
@@ -59,7 +72,7 @@ export default function PayrollPage() {
           {stages.map((label, index) => (
             <div key={label} className={`workflow-step ${index < stage ? "complete" : index === stage ? "current" : ""}`}>
               <div className="step-marker">{index < stage ? <Checkmark16Regular /> : index + 1}</div>
-              <div><strong>{label}</strong><span>{index < stage ? "Completed" : index === stage ? "In progress" : "Not started"}</span></div>
+              <div className="step-copy"><strong>{label}</strong><span>{index < stage ? "Completed" : index === stage ? "In progress" : "Not started"}</span></div>
             </div>
           ))}
         </div>
@@ -69,20 +82,50 @@ export default function PayrollPage() {
         <section className="panel data-panel">
           <div className="panel-header">
             <div className="panel-title"><h2>Employee calculations</h2><p>Five sample records from 68 employees</p></div>
-            <Button appearance="subtle" size="small">View all 68</Button>
+            <div className="panel-actions">
+              <Button
+                appearance="secondary"
+                size="small"
+                icon={generatingPayslips ? <Spinner size="tiny" /> : <DocumentPdf20Regular />}
+                onClick={generatePayslips}
+                disabled={generatingPayslips}
+              >
+                {generatingPayslips ? "Generating" : payslipsGenerated ? "Regenerate payslips" : "Generate payslips"}
+              </Button>
+              <Button appearance="subtle" size="small">View all 68</Button>
+            </div>
           </div>
           <table className="data-table">
-            <thead><tr><th>Employee</th><th style={{ textAlign: "right" }}>Gross pay</th><th style={{ textAlign: "right" }}>Deductions</th><th style={{ textAlign: "right" }}>Net pay</th><th>Status</th></tr></thead>
+            <thead><tr><th>Employee</th><th style={{ textAlign: "right" }}>Gross pay</th><th style={{ textAlign: "right" }}>Deductions</th><th style={{ textAlign: "right" }}>Net pay</th><th>Status</th><th>Payslip</th></tr></thead>
             <tbody>
-              {payrollRows.map((row) => (
-                <tr key={row.name}>
+              {payrollRows.map((row) => {
+                const payslip = demoPayslips.find((record) => record.name === row.name);
+                const canDownload = payslipsGenerated && row.status !== "On hold" && payslip;
+
+                return <tr key={row.name}>
                   <td><strong style={{ color: "var(--text)" }}>{row.name}</strong></td>
                   <td className="numeric">{formatInr(row.gross)}</td>
                   <td className="numeric">{formatInr(row.deductions)}</td>
                   <td className="numeric"><strong>{formatInr(row.net)}</strong></td>
                   <td><StatusChip tone={row.status === "Ready" ? "success" : row.status === "Review" ? "warning" : "danger"}>{row.status}</StatusChip></td>
-                </tr>
-              ))}
+                  <td>
+                    {canDownload ? (
+                      <Button
+                        appearance="subtle"
+                        size="small"
+                        icon={<ArrowDownload20Regular />}
+                        as="a"
+                        href={`/api/demo-payslip?employee=${payslip.slug}`}
+                        download={`${payslip.employeeId}-Payslip-Aug-2026.pdf`}
+                      >
+                        Download PDF
+                      </Button>
+                    ) : (
+                      <span className="payslip-state">{row.status === "On hold" ? "On hold" : "Generate first"}</span>
+                    )}
+                  </td>
+                </tr>;
+              })}
             </tbody>
           </table>
         </section>

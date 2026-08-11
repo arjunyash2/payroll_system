@@ -409,16 +409,18 @@ a {
 
 .workflow-step {
   position: relative;
-  align-items: flex-start;
-  gap: 10px;
+  display: grid;
+  grid-template-rows: 28px auto;
+  padding-right: 18px;
+  row-gap: 10px;
 }
 
 .workflow-step:not(:last-child)::after {
   content: "";
   position: absolute;
   top: 14px;
-  right: 8px;
-  left: 38px;
+  right: 0;
+  left: 28px;
   height: 1px;
   background: var(--border-strong);
 }
@@ -460,8 +462,11 @@ a {
   display: block;
 }
 
+.step-copy {
+  min-width: 0;
+}
+
 .workflow-step strong {
-  margin-top: 1px;
   font-size: 11px;
 }
 
@@ -577,6 +582,12 @@ a {
   overflow: hidden;
 }
 
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -613,6 +624,12 @@ a {
   color: var(--text);
   font-variant-numeric: tabular-nums;
   text-align: right;
+}
+
+.payslip-state {
+  color: var(--text-tertiary);
+  font-size: 10px;
+  white-space: nowrap;
 }
 
 .person-cell {
@@ -1099,12 +1116,16 @@ a {
   .stat-cell:last-child { border-bottom: 0; }
   .dashboard-grid { grid-template-columns: 1fr; }
   .workflow { grid-template-columns: 1fr; gap: 14px; }
+  .workflow-step { grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: auto; column-gap: 10px; padding-right: 0; row-gap: 0; }
+  .workflow-step .step-copy { grid-column: 2; }
   .workflow-step:not(:last-child)::after { top: 28px; bottom: -15px; left: 14px; width: 1px; height: auto; }
+  .panel-header { align-items: flex-start; }
+  .panel-actions { align-items: stretch; flex-direction: column; }
   .toolbar { align-items: stretch; flex-direction: column; }
   .toolbar-left, .toolbar-right { width: 100%; }
   .search-wrap { width: 100%; }
   .data-panel { overflow-x: auto; }
-  .data-table { min-width: 760px; }
+  .data-table { min-width: 920px; }
   .topbar-actions .demo-label, .topbar-actions > button { display: none; }
   .period-control strong { font-size: 11px; }
   .login-panel { padding: 28px 22px; }
