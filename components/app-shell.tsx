@@ -80,8 +80,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span>Settings</span>
           </Link>
           <div className="sidebar-profile">
-            <div className="avatar avatar-small">NI</div>
-            <div><strong>Nisha Iyer</strong><span>Payroll admin</span></div>
+            <div className="avatar avatar-small">SH</div>
+            <div><strong>Sumi H</strong><span>Payroll admin</span></div>
             <Tooltip content="Sign out" relationship="label">
               <Button appearance="subtle" icon={<ArrowExit20Regular />} aria-label="Sign out" onClick={signOut} />
             </Tooltip>
@@ -111,7 +111,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Tooltip content="Theme follows system settings" relationship="label">
               <Button appearance="subtle" icon={<WeatherMoon20Regular />} aria-label="Theme settings" />
             </Tooltip>
-            <div className="avatar">NI</div>
+            <div className="avatar">SH</div>
           </div>
         </div>
         <main className="main-content">{children}</main>

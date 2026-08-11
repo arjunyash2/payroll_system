@@ -19,7 +19,7 @@ const getSessionKey = () => {
 };
 
 export async function createDemoSession() {
-  return new SignJWT({ role: "hr_admin", name: "Nisha Iyer" })
+  return new SignJWT({ role: "hr_admin", name: "Sumi H" })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject("demo-hr")
     .setIssuedAt()

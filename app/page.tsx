@@ -19,7 +19,7 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <PageHeader
-        title="Good morning, Nisha"
+        title="Good morning, Sumi"
         description="August payroll is in review. Resolve two exceptions before sending it to Finance."
         actions={<Button appearance="primary" as="a" href="/payroll" icon={<ArrowRight20Regular />}>Open payroll</Button>}
       />
